@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تَعَلَّمِ الْحُرُوف</title>
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        body {
+            text-align: center;
+            font-family: sans-serif;
+            background-color: #fdfbf7;
+            margin: 0;
+            padding: 8px;
+        }
+
+        /* 🔝 الشريط الأفقي المدمج */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ffffff;
+            padding: 6px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+            gap: 6px;
+        }
+
+        .nav-btn {
+            background-color: #ff9800;
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .game-btn {
+            background-color: #4caf50;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .score-board {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff9800;
+            white-space: nowrap;
+        }
+
+        .target-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e91e63;
+            min-height: 24px;
+            margin-bottom: 8px;
+        }
+
+        .letters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+        }
+
+        .letter-card {
+            background-color: white;
+            border: 2px solid #ffb74d;
+            border-radius: 12px;
+            padding: 8px 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+
+        .letter-card:active {
+            transform: scale(0.96);
+            background-color: #fff3e0;
+        }
+
+        .letter-char {
+            font-size: 28px;
+            font-weight: bold;
+            color: #d84315;
+            margin: 0;
+        }
+
+        .letter-word {
+            font-size: 14px;
+            color: #555;
+            margin: 2px 0 0 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="words.html" class="nav-btn">📖 الْكَلِمَات</a>
+        <button class="game-btn" onclick="askQuestion()">🎯 ابدأ التحدي</button>
+        <div class="score-board">⭐ <span id="score-counter">0</span></div>
+    </div>
+
+    <div id="target-text" class="target-display">اضغط "ابدأ التحدي" للعب</div>
+
+    <div class="letters-container" id="letters-grid"></div>
+
+    <script>
+        const lettersData = [
+            { char: 'أ', word: 'أَسَد' }, { char: 'ب', word: 'بَطَّة' },
+            { char: 'ت', word: 'تُفَّاح' }, { char: 'ث', word: 'ثَعْلَب' },
+            { char: 'ج', word: 'جَمَل' }, { char: 'ح', word: 'حِصَان' },
+            { char: 'خ', word: 'خَرُوف' }, { char: 'د', word: 'دُب' },
+            { char: 'ذ', word: 'ذِئْب' }, { char: 'ر', word: 'رِيشَة' },
+            { char: 'ز', word: 'زَرَافَة' }, { char: 'س', word: 'سَيَّارَة' },
+            { char: 'ش', word: 'شَمْس' }, { char: 'ص', word: 'صَقْر' },
+            { char: 'ض', word: 'ضِفْدَع' }, { char: 'ط', word: 'طَيَّارَة' },
+            { char: 'ظ', word: 'ظَرْف' }, { char: 'ع', word: 'عَيْن' },
+            { char: 'غ', word: 'غَزَال' }, { char: 'ف', word: 'فِيل' },
+            { char: 'ق', word: 'قَلَم' }, { char: 'ك', word: 'كِتَاب' },
+            { char: 'ل', word: 'لَيْمُون' }, { char: 'م', word: 'مَوْز' },
+            { char: 'ن', word: 'نَحْلَة' }, { char: 'هـ', word: 'هَرَم' },
+            { char: 'و', word: 'وَرْدَة' }, { char: 'ي', word: 'يَد' }
+        ];
+
+        let targetLetter = null;
+        let score = 0;
+
+        // توليد البطاقات تلقائياً
+        const grid = document.getElementById('letters-grid');
+        lettersData.forEach(item => {
+            let card = document.createElement('div');
+            card.className = 'letter-card';
+            card.onclick = () => checkLetter(item);
+            card.innerHTML = `<div class="letter-char">${item.char}</div><div class="letter-word">${item.word}</div>`;
+            grid.appendChild(card);
+        });
+
+        // تشغيل نغمة فوز موسيقية
+        function playSuccessSound() {
+            let ctx = new (window.AudioContext || window.webkitAudioContext)();
+            let osc = ctx.createOscillator();
+            let gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+            osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.35);
+        }
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            let msg = new SpeechSynthesisUtterance(text);
+            msg.lang = "ar-SA";
+            msg.pitch = 1.3;
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
+        }
+
+        function askQuestion() {
+            let randomIndex = Math.floor(Math.random() * lettersData.length);
+            targetLetter = lettersData[randomIndex];
+            document.getElementById("target-text").innerText = "ابْحَثْ عَنْ حَرْفِ: " + targetLetter.char;
+            speak("أَيْنَ حَرْفُ " + targetLetter.char + "؟");
+        }
+
+        function checkLetter(item) {
+            if (!targetLetter) {
+                speak(item.char + " .. " + item.word);
+                return;
+            }
+
+            if (item.char === targetLetter.char) {
+                score++;
+                document.getElementById("score-counter").innerText = score;
+                playSuccessSound(); // نغمة الفوز
+                speak("أَحْسَنْتَ!");
+                document.getElementById("target-text").innerText = "🎉 مُمْتَاز!";
+                
+                // الانتقال التلقائي بعد ثانية ونصف
+                setTimeout(askQuestion, 1500);
+            } else {
+                speak("حَاوِلْ مَرَّةً أُخْرَى");
+            }
+        }
+    </script>
+</body>
+</html>

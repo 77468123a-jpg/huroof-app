@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كَلِمَاتِي الْأُولَى</title>
+    <link rel="manifest" href="manifest.json">
+
+    <style>
+        body {
+            text-align: center;
+            font-family: sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 8px;
+        }
+
+        /* 📌 شريط التحكم العلوي الأفقي */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ffffff;
+            padding: 6px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+            gap: 6px;
+        }
+
+        /* 🔙 زر العودة */
+        .back-btn {
+            background-color: #607d8b;
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* 🎯 زر التحدي */
+        .game-btn {
+            background-color: #ff5722;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* ⭐ لوحة النقاط */
+        .score-board {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff9800;
+            white-space: nowrap;
+        }
+
+        /* 📢 نص السؤال التوجيهي */
+        .target-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d32f2f;
+            min-height: 24px;
+            margin-bottom: 8px;
+        }
+
+        /* 📱 شبكة بطاقات الكلمات */
+        .words-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        /* 📝 بطاقة الكلمة */
+        .word-card {
+            background-color: white;
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            padding: 8px 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .word-card:active {
+            transform: scale(0.96);
+            background-color: #e3f2fd;
+        }
+
+        .word-icon { font-size: 26px; margin-bottom: 2px; }
+        .word-text { font-size: 20px; font-weight: bold; color: #1565c0; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <!-- 🔝 الشريط الأفقي المدمج -->
+    <div class="top-bar">
+        <a href="index.html" class="back-btn">🔙 رجوع</a>
+        <button class="game-btn" onclick="askQuestion()">🎯 ابدأ التحدي</button>
+        <div class="score-board">⭐ <span id="score-counter">0</span></div>
+    </div>
+
+    <!-- نص التوجيه والسؤال -->
+    <div id="target-text" class="target-display">اضغط "ابدأ التحدي" للعب</div>
+
+    <!-- بطاقات الكلمات -->
+    <div class="words-container">
+        <!-- المجموعة 1 -->
+        <div class="word-card" onclick="checkWord('أَكَلَ')"><span class="word-icon">🍽️</span><p class="word-text">أَكَلَ</p></div>
+        <div class="word-card" onclick="checkWord('بَذَرَ')"><span class="word-icon">🌱</span><p class="word-text">بَذَرَ</p></div>
+        <div class="word-card" onclick="checkWord('تَرَكَ')"><span class="word-icon">📦</span><p class="word-text">تَرَكَ</p></div>
+        <div class="word-card" onclick="checkWord('ثَبَتَ')"><span class="word-icon">🧗‍♂️</span><p class="word-text">ثَبَتَ</p></div>
+        <div class="word-card" onclick="checkWord('جَبَل')"><span class="word-icon">🏔️</span><p class="word-text">جَبَل</p></div>
+
+        <!-- المجموعة 2 -->
+        <div class="word-card" onclick="checkWord('حَصَدَ')"><span class="word-icon">🌾</span><p class="word-text">حَصَدَ</p></div>
+        <div class="word-card" onclick="checkWord('خَشَب')"><span class="word-icon">🪵</span><p class="word-text">خَشَب</p></div>
+        <div class="word-card" onclick="checkWord('دَرَسَ')"><span class="word-icon">📖</span><p class="word-text">دَرَسَ</p></div>
+        <div class="word-card" onclick="checkWord('ذَهَبَ')"><span class="word-icon">🚶‍♂️</span><p class="word-text">ذَهَبَ</p></div>
+        <div class="word-card" onclick="checkWord('رَكَضَ')"><span class="word-icon">🏃‍♂️</span><p class="word-text">رَكَضَ</p></div>
+
+        <!-- المجموعة 3 -->
+        <div class="word-card" onclick="checkWord('زَرَعَ')"><span class="word-icon">🌱</span><p class="word-text">زَرَعَ</p></div>
+        <div class="word-card" onclick="checkWord('سَحَبَ')"><span class="word-icon">🧲</span><p class="word-text">سَحَبَ</p></div>
+        <div class="word-card" onclick="checkWord('شَكَرَ')"><span class="word-icon">🙏</span><p class="word-text">شَكَرَ</p></div>
+        <div class="word-card" onclick="checkWord('صَبَرَ')"><span class="word-icon">🤲</span><p class="word-text">صَبَرَ</p></div>
+        <div class="word-card" onclick="checkWord('ضَرَبَ')"><span class="word-icon">🥁</span><p class="word-text">ضَرَبَ</p></div>
+
+        <!-- المجموعة 4 -->
+        <div class="word-card" onclick="checkWord('طَرَقَ')"><span class="word-icon">🚪</span><p class="word-text">طَرَقَ</p></div>
+        <div class="word-card" onclick="checkWord('ظَهَرَ')"><span class="word-icon">🌅</span><p class="word-text">ظَهَرَ</p></div>
+        <div class="word-card" onclick="checkWord('عَرَفَ')"><span class="word-icon">💡</span><p class="word-text">عَرَفَ</p></div>
+        <div class="word-card" onclick="checkWord('غَسَلَ')"><span class="word-icon">🧼</span><p class="word-text">غَسَلَ</p></div>
+        <div class="word-card" onclick="checkWord('فَتَحَ')"><span class="word-icon">📖</span><p class="word-text">فَتَحَ</p></div>
+
+        <!-- المجموعة 5 -->
+        <div class="word-card" onclick="checkWord('قَرَأَ')"><span class="word-icon">📖</span><p class="word-text">قَرَأَ</p></div>
+        <div class="word-card" onclick="checkWord('كَتَبَ')"><span class="word-icon">✍️</span><p class="word-text">كَتَبَ</p></div>
+        <div class="word-card" onclick="checkWord('لَمَسَ')"><span class="word-icon">✋</span><p class="word-text">لَمَسَ</p></div>
+        <div class="word-card" onclick="checkWord('مَسَحَ')"><span class="word-icon">🧽</span><p class="word-text">مَسَحَ</p></div>
+        <div class="word-card" onclick="checkWord('نَظَرَ')"><span class="word-icon">👀</span><p class="word-text">نَظَرَ</p></div>
+        <div class="word-card" onclick="checkWord('هَرَبَ')"><span class="word-icon">🏃‍♂️</span><p class="word-text">هَرَبَ</p></div>
+        <div class="word-card" onclick="checkWord('وَقَفَ')"><span class="word-icon">🧍‍♂️</span><p class="word-text">وَقَفَ</p></div>
+        <div class="word-card" onclick="checkWord('يَنَعَ')"><span class="word-icon">🍎</span><p class="word-text">يَنَعَ</p></div>
+    </div>
+
+    <script>
+        let wordsList = [
+            'أَكَلَ', 'بَذَرَ', 'تَرَكَ', 'ثَبَتَ', 'جَبَل',
+            'حَصَدَ', 'خَشَب', 'دَرَسَ', 'ذَهَبَ', 'رَكَضَ',
+            'زَرَعَ', 'سَحَبَ', 'شَكَرَ', 'صَبَرَ', 'ضَرَبَ',
+            'طَرَقَ', 'ظَهَرَ', 'عَرَفَ', 'غَسَلَ', 'فَتَحَ',
+            'قَرَأَ', 'كَتَبَ', 'لَمَسَ', 'مَسَحَ', 'نَظَرَ',
+            'هَرَبَ', 'وَقَفَ', 'يَنَعَ'
+        ];
+
+        let targetWord = null;
+        let score = 0;
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            let message = new SpeechSynthesisUtterance(text);
+            message.lang = "ar-SA";
+            message.pitch = 1.3;
+            message.rate = 0.9;
+            window.speechSynthesis.speak(message);
+        }
+
+        function askQuestion() {
+            let randomIndex = Math.floor(Math.random() * wordsList.length);
+            targetWord = wordsList[randomIndex];
+            document.getElementById("target-text").innerText = "ابْحَثْ عَنْ كَلِمَةِ: " + targetWord;
+            speak("أَيْنَ كَلِمَةُ " + targetWord + "؟");
+        }
+
+        function checkWord(selectedWord) {
+            if (!targetWord) {
+                speak(selectedWord);
+                return;
+            }
+
+            if (selectedWord === targetWord) {
+                score++;
+                document.getElementById("score-counter").innerText = score;
+                speak("أَحْسَنْتَ! إِجَابَةٌ صَحِيحَةٌ");
+                document.getElementById("target-text").innerText = "🎉 مُمْتَاز!";
+                
+                // ⏱️ الانتقال التلقائي للسؤال التالي بعد ثانية ونصف
+                setTimeout(askQuestion, 1500);
+            } else {
+                speak("حَاوِلْ مَرَّةً أُخْرَى");
+            }
+        }
+    </script>
+</body>
+</html>
