@@ -103,7 +103,8 @@
 <body>
 
     <div class="top-bar">
-        <a href="words.html" class="nav-btn">📖 الْكَلِمَات</a>
+              <a href="./words.html" class="nav-btn">📖 الْكَلِمَات</a>
+
         <button class="game-btn" onclick="askQuestion()">🎯 ابدأ التحدي</button>
         <div class="score-board">⭐ <span id="score-counter">0</span></div>
     </div>
@@ -195,5 +196,15 @@
             }
         }
     </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch((err) => console.log('Service Worker Failed', err));
+    });
+  }
+</script>
+
 </body>
 </html>
