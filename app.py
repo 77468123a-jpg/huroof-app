@@ -1,7 +1,7 @@
 import os
 import json
 import sqlite3
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
@@ -22,6 +22,11 @@ def get_db_connection():
     connection = sqlite3.connect(DB_FILE_PATH)
     connection.row_factory = sqlite3.Row
     return connection
+
+@app.route('/')
+def home():
+    """عرض واجهة تطبيق الحروف والوعي الصوتي للطفل"""
+    return render_template('index.html')
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -58,7 +63,7 @@ def save_score():
 
     letter = payload.get('letter')
     word = payload.get('word')
-    skill_type = payload.get('skill_type')  # مثل: syllable_segmentation
+    skill_type = payload.get('skill_type')
     score = payload.get('score', 0)
 
     if not all([letter, word, skill_type]):
