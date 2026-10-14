@@ -54,15 +54,17 @@
         }
 
         .letter-display {
-            font-size: 5rem;
+            font-size: 5.5rem;
             font-weight: bold;
             color: var(--primary-color);
             line-height: 1.2;
             margin-bottom: 8px;
+            cursor: pointer;
+            user-select: none;
         }
 
         .letter-name {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #718096;
             margin-bottom: 16px;
         }
@@ -75,30 +77,33 @@
         }
 
         .full-word {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: bold;
             color: var(--text-color);
             margin: 0 0 12px 0;
+            cursor: pointer;
+            user-select: none;
         }
 
         .syllables-container {
             display: flex;
             justify-content: center;
             gap: 12px;
-            margin-top: 12px;
+            margin-top: 14px;
         }
 
         .syllable-btn {
             background-color: var(--card-bg);
             border: 2px solid var(--accent-color);
             color: var(--accent-color);
-            border-radius: 10px;
-            font-size: 1.8rem;
+            border-radius: 12px;
+            font-size: 2rem;
             font-family: 'Amiri', serif;
             font-weight: bold;
-            padding: 8px 20px;
+            padding: 10px 24px;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .syllable-btn:active {
@@ -111,30 +116,73 @@
             display: inline-block;
             background-color: #edf2f7;
             color: #4a5568;
-            font-size: 0.9rem;
-            padding: 4px 12px;
+            font-size: 0.95rem;
+            padding: 4px 14px;
             border-radius: 20px;
             margin-bottom: 8px;
+        }
+
+        .hint-text {
+            font-size: 0.95rem;
+            color: #a0aec0;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="header-title">نَادِي الأَصْوَاتِ العَرَبِيَّة</h1>
+
         <div class="card">
-            <div class="letter-display" id="char-display">ب</div>
-            <div class="letter-name" id="char-name">حَرْفُ البَاءِ (صَوْتُ: بْ)</div>
+            <!-- النقر على الحرف يُسمع صوت الحرف الساكن -->
+            <div class="letter-display" id="char-display" onclick="playPhoneme('بْ')">ب</div>
+            <div class="letter-name">حَرْفُ البَاءِ (انقر لسماع: بْ)</div>
 
             <div class="word-box">
                 <span class="badge-inanimate">جَمَاد</span>
-                <div class="full-word" id="word-display">بَابٌ</div>
+                <!-- النقر على الكلمة يُسمع نطق الكلمة التامة -->
+                <div class="full-word" id="word-display" onclick="playPhoneme('بَابٌ')">بَابٌ</div>
                 
-                <div class="syllables-container" id="syllables-wrapper">
-                    <button class="syllable-btn" type="button">بَا</button>
-                    <button class="syllable-btn" type="button">بُن</button>
+                <!-- أزرار التقطيع الصوتي التفاعلية -->
+                <div class="syllables-container">
+                    <button class="syllable-btn" type="button" onclick="handleSyllable('بَا')">بَا</button>
+                    <button class="syllable-btn" type="button" onclick="handleSyllable('بُن')">بُن</button>
                 </div>
+                <div class="hint-text">المقاطع الصوتية: [ بَا + بُن ]</div>
             </div>
         </div>
     </div>
+
+    <script>
+        function playPhoneme(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.75; // وتيرة واضحة تلائم وعي الطفل
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function handleSyllable(syllable) {
+            playPhoneme(syllable);
+
+            // إرسال نتيجة النشاط الصوتي إلى الخادم لحفظ الإتقان
+            fetch('/api/score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    letter: 'ب',
+                    word: 'بَابٌ',
+                    skill_type: 'syllable_segmentation',
+                    score: 10
+                })
+            }).catch(function(err) {
+                console.log('Progress sync note:', err);
+            });
+        }
+    </script>
 </body>
 </html>
