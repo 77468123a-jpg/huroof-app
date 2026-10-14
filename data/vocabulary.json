@@ -1,0 +1,17 @@
+{
+  "letters": {
+    "ب": {
+      "name": "بَاء",
+      "sound": "بْ",
+      "words": [
+        {
+          "word": "بَابٌ",
+          "position": "initial",
+          "vowel": "long_a",
+          "category": "inanimate",
+          "syllables": ["بَا", "بُن"]
+        }
+      ]
+    }
+  }
+}
