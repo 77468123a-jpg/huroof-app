@@ -3,40 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تَعَلَّمِ الْحُرُوف</title>
+    <title>بَوَّابَةُ حُرُوفِي التَّعْلِيمِيَّة</title>
     <link rel="manifest" href="manifest.json">
 
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             text-align: center;
-            font-family: sans-serif;
-            background-color: #fdfbf7;
+            background-color: #f7f9fc;
             margin: 0;
             padding: 8px;
         }
 
-        /* 🔝 الشريط الأفقي المدمج */
+        /* 🔝 شريط التبديل بين الأقسام الرئيسية */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 4px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #f1f5f9;
+            color: #475569;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active-tab {
+            background: #ff9800;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(255,152,0,0.3);
+        }
+
+        /* 📌 شريط التحكم واللعب داخل كل قسم */
         .top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background-color: #ffffff;
-            padding: 6px 10px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 8px;
-            gap: 6px;
-        }
-
-        .nav-btn {
-            background-color: #ff9800;
-            color: white;
-            text-decoration: none;
             padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 13px;
-            font-weight: bold;
-            white-space: nowrap;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 8px;
         }
 
         .game-btn {
@@ -44,31 +68,38 @@
             color: white;
             font-size: 13px;
             font-weight: bold;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border: none;
             border-radius: 15px;
             cursor: pointer;
-            white-space: nowrap;
         }
 
         .score-board {
             font-size: 14px;
             font-weight: bold;
             color: #ff9800;
-            white-space: nowrap;
         }
 
         .target-display {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: bold;
             color: #e91e63;
             min-height: 24px;
             margin-bottom: 8px;
         }
 
+        /* الشاشات التفاعلية */
+        .screen-section {
+            display: none;
+        }
+        .screen-section.active-section {
+            display: block;
+        }
+
+        /* 🔤 شبكة الحروف */
         .letters-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
             gap: 8px;
         }
 
@@ -76,75 +107,191 @@
             background-color: white;
             border: 2px solid #ffb74d;
             border-radius: 12px;
-            padding: 8px 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            padding: 6px 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             cursor: pointer;
         }
 
         .letter-card:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
             background-color: #fff3e0;
         }
 
         .letter-char {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
             color: #d84315;
             margin: 0;
         }
 
         .letter-word {
-            font-size: 14px;
+            font-size: 13px;
             color: #555;
             margin: 2px 0 0 0;
+        }
+
+        /* 📖 شبكة الكلمات */
+        .words-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+            gap: 8px;
+        }
+
+        .word-card {
+            background-color: white;
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            padding: 8px 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .word-card:active {
+            transform: scale(0.95);
+            background-color: #e3f2fd;
+        }
+
+        .word-icon { font-size: 24px; }
+        .word-text { font-size: 18px; font-weight: bold; color: #1565c0; margin: 2px 0 0 0; }
+
+        /* ✨ شبكة المدود */
+        .madd-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .madd-row {
+            background: white;
+            border: 2px solid #9c27b0;
+            border-radius: 14px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .sound-box {
+            background: #f3e5f5;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid #ce93d8;
+        }
+
+        .sound-box:active {
+            transform: scale(0.95);
+            background: #e1bee7;
+        }
+
+        .sound-box span {
+            display: block;
+            font-size: 12px;
+            color: #7b1fa2;
+        }
+
+        .sound-box strong {
+            font-size: 22px;
+            color: #4a148c;
         }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-              <a href="./words.html" class="nav-btn">📖 الْكَلِمَات</a>
-
-        <button class="game-btn" onclick="askQuestion()">🎯 ابدأ التحدي</button>
-        <div class="score-board">⭐ <span id="score-counter">0</span></div>
+    <!-- 🔝 شريط التبديل بين الأقسام -->
+    <div class="nav-tabs">
+        <button class="tab-btn active-tab" onclick="switchSection('letters', this)">🔤 الحروف</button>
+        <button class="tab-btn" onclick="switchSection('words', this)">📖 الكلمات</button>
+        <button class="tab-btn" onclick="switchSection('madd', this)">✨ المدود</button>
     </div>
 
-    <div id="target-text" class="target-display">اضغط "ابدأ التحدي" للعب</div>
+    <!-- 🔤 قسم الحروف الهجائية -->
+    <div id="section-letters" class="screen-section active-section">
+        <div class="top-bar">
+            <button class="game-btn" onclick="askLetterQuestion()">🎯 ابدأ التحدي</button>
+            <div class="score-board">⭐ <span id="score-letters">0</span></div>
+        </div>
+        <div id="target-letter-text" class="target-display">اضغط "ابدأ التحدي" للعب</div>
+        <div class="letters-container" id="letters-grid"></div>
+    </div>
 
-    <div class="letters-container" id="letters-grid"></div>
+    <!-- 📖 قسم الكلمات الثلاثية -->
+    <div id="section-words" class="screen-section">
+        <div class="top-bar">
+            <button class="game-btn" style="background:#ff5722;" onclick="askWordQuestion()">🎯 تحدي الكلمات</button>
+            <div class="score-board">⭐ <span id="score-words">0</span></div>
+        </div>
+        <div id="target-word-text" class="target-display">اضغط "تحدي الكلمات" للعب</div>
+        <div class="words-container" id="words-grid"></div>
+    </div>
+
+    <!-- ✨ قسم المدود -->
+    <div id="section-madd" class="screen-section">
+        <div class="top-bar">
+            <span style="font-weight:bold; color:#7b1fa2;">استمع وقارن بين الصوت القصير والطويل</span>
+        </div>
+        <div class="madd-container" id="madd-grid"></div>
+    </div>
 
     <script>
+        /* ================= بيانات الحروف ================= */
         const lettersData = [
-            { char: 'أ', word: 'أَسَد' }, { char: 'ب', word: 'بَطَّة' },
-            { char: 'ت', word: 'تُفَّاح' }, { char: 'ث', word: 'ثَعْلَب' },
-            { char: 'ج', word: 'جَمَل' }, { char: 'ح', word: 'حِصَان' },
-            { char: 'خ', word: 'خَرُوف' }, { char: 'د', word: 'دُب' },
-            { char: 'ذ', word: 'ذِئْب' }, { char: 'ر', word: 'رِيشَة' },
-            { char: 'ز', word: 'زَرَافَة' }, { char: 'س', word: 'سَيَّارَة' },
-            { char: 'ش', word: 'شَمْس' }, { char: 'ص', word: 'صَقْر' },
-            { char: 'ض', word: 'ضِفْدَع' }, { char: 'ط', word: 'طَيَّارَة' },
-            { char: 'ظ', word: 'ظَرْف' }, { char: 'ع', word: 'عَيْن' },
-            { char: 'غ', word: 'غَزَال' }, { char: 'ف', word: 'فِيل' },
-            { char: 'ق', word: 'قَلَم' }, { char: 'ك', word: 'كِتَاب' },
-            { char: 'ل', word: 'لَيْمُون' }, { char: 'م', word: 'مَوْز' },
-            { char: 'ن', word: 'نَحْلَة' }, { char: 'هـ', word: 'هَرَم' },
-            { char: 'و', word: 'وَرْدَة' }, { char: 'ي', word: 'يَد' }
+            { char: 'أ', word: 'أَسَد', id: 'alif' }, { char: 'ب', word: 'بَطَّة', id: 'baa' },
+            { char: 'ت', word: 'تُفَّاح', id: 'taa' }, { char: 'ث', word: 'ثَعْلَب', id: 'thaa' },
+            { char: 'ج', word: 'جَمَل', id: 'jeem' }, { char: 'ح', word: 'حِصَان', id: 'haa' },
+            { char: 'خ', word: 'خَرُوف', id: 'khaa' }, { char: 'د', word: 'دُب', id: 'daal' },
+            { char: 'ذ', word: 'ذِئْب', id: 'thaal' }, { char: 'ر', word: 'رِيشَة', id: 'raa' },
+            { char: 'ز', word: 'زَرَافَة', id: 'zay' }, { char: 'س', word: 'سَيَّارَة', id: 'seen' },
+            { char: 'ش', word: 'شَمْس', id: 'sheen' }, { char: 'ص', word: 'صَقْر', id: 'saad' },
+            { char: 'ض', word: 'ضِفْدَع', id: 'daad' }, { char: 'ط', word: 'طَيَّارَة', id: 'taa_m' },
+            { char: 'ظ', word: 'ظَرْف', id: 'zaa' }, { char: 'ع', word: 'عَيْن', id: 'ayn' },
+            { char: 'غ', word: 'غَزَال', id: 'ghayn' }, { char: 'ف', word: 'فِيل', id: 'faa' },
+            { char: 'ق', word: 'قَلَم', id: 'qaaf' }, { char: 'ك', word: 'كِتَاب', id: 'kaaf' },
+            { char: 'ل', word: 'لَيْمُون', id: 'laam' }, { char: 'م', word: 'مَوْز', id: 'meem' },
+            { char: 'ن', word: 'نَحْلَة', id: 'noon' }, { char: 'هـ', word: 'هَرَم', id: 'haa_m' },
+            { char: 'و', word: 'وَرْدَة', id: 'waaw' }, { char: 'ي', word: 'يَد', id: 'yaa' }
         ];
 
-        let targetLetter = null;
-        let score = 0;
+        /* ================= بيانات الكلمات ================= */
+        const wordsData = [
+            { t: 'أَكَلَ', i: '🍽️' }, { t: 'بَذَرَ', i: '🌱' }, { t: 'تَرَكَ', i: '📦' }, { t: 'ثَبَتَ', i: '🧗‍♂️' },
+            { t: 'جَبَل', i: '🏔️' }, { t: 'حَصَدَ', i: '🌾' }, { t: 'خَشَب', i: '🪵' }, { t: 'دَرَسَ', i: '📖' },
+            { t: 'ذَهَبَ', i: '🚶‍♂️' }, { t: 'رَكَضَ', i: '🏃‍♂️' }, { t: 'زَرَعَ', i: '🌱' }, { t: 'سَحَبَ', i: '🧲' },
+            { t: 'شَكَرَ', i: '🙏' }, { t: 'صَبَرَ', i: '🤲' }, { t: 'ضَرَبَ', i: '🥁' }, { t: 'طَرَقَ', i: '🚪' },
+            { t: 'ظَهَرَ', i: '🌅' }, { t: 'عَرَفَ', i: '💡' }, { t: 'غَسَلَ', i: '🧼' }, { t: 'فَتَحَ', i: '📖' },
+            { t: 'قَرَأَ', i: '📖' }, { t: 'كَتَبَ', i: '✍️' }, { t: 'لَمَسَ', i: '✋' }, { t: 'مَسَحَ', i: '🧽' },
+            { t: 'نَظَرَ', i: '👀' }, { t: 'هَرَبَ', i: '🏃‍♂️' }, { t: 'وَقَفَ', i: '🧍‍♂️' }, { t: 'يَنَعَ', i: '🍎' }
+        ];
 
-        // توليد البطاقات تلقائياً
-        const grid = document.getElementById('letters-grid');
-        lettersData.forEach(item => {
-            let card = document.createElement('div');
-            card.className = 'letter-card';
-            card.onclick = () => checkLetter(item);
-            card.innerHTML = `<div class="letter-char">${item.char}</div><div class="letter-word">${item.word}</div>`;
-            grid.appendChild(card);
-        });
+        /* ================= بيانات المدود ================= */
+        const maddData = [
+            { short: 'بَ (فتحة)', long: 'بَا (مد بالألف)', ex: 'بَاب' },
+            { short: 'بُ (ضمة)', long: 'بُو (مد بالواو)', ex: 'بُومَة' },
+            { short: 'بِ (كسرة)', long: 'بِي (مد بالياء)', ex: 'طَبِيب' },
+            { short: 'تَ (فتحة)', long: 'تَا (مد بالألف)', ex: 'تَاج' },
+            { short: 'تُ (ضمة)', long: 'تُو (مد بالواو)', ex: 'تُوت' },
+            { short: 'تِ (كسرة)', long: 'تِي (مد بالياء)', ex: 'تِين' }
+        ];
 
-        // تشغيل نغمة فوز موسيقية
+        /* ================= نظام الصوت الذكي (تسجيلك الخاص + بديل آلي) ================= */
+        function playCustomOrTTS(fileName, fallbackText) {
+            // يبحث أولاً عن تسجيلك في مجلد sounds
+            let audio = new Audio('sounds/' + fileName + '.mp3');
+            audio.play().catch(() => {
+                // إذا لم يجد التسجيل الصوتي، ينطق آلياً
+                speakFallback(fallbackText);
+            });
+        }
+
+        function speakFallback(text) {
+            window.speechSynthesis.cancel();
+            let msg = new SpeechSynthesisUtterance(text);
+            msg.lang = "ar-SA";
+            msg.pitch = 1.3;
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
+        }
+
         function playSuccessSound() {
             let ctx = new (window.AudioContext || window.webkitAudioContext)();
             let osc = ctx.createOscillator();
@@ -160,51 +307,114 @@
             osc.stop(ctx.currentTime + 0.35);
         }
 
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            let msg = new SpeechSynthesisUtterance(text);
-            msg.lang = "ar-SA";
-            msg.pitch = 1.3;
-            msg.rate = 0.9;
-            window.speechSynthesis.speak(msg);
-        }
+        /* ================= توليد العناصر برمجياً ================= */
+        // 1. بناء شبكة الحروف
+        const lettersGrid = document.getElementById('letters-grid');
+        lettersData.forEach(item => {
+            let card = document.createElement('div');
+            card.className = 'letter-card';
+            card.onclick = () => checkLetter(item);
+            card.innerHTML = `<div class="letter-char">${item.char}</div><div class="letter-word">${item.word}</div>`;
+            lettersGrid.appendChild(card);
+        });
 
-        function askQuestion() {
-            let randomIndex = Math.floor(Math.random() * lettersData.length);
-            targetLetter = lettersData[randomIndex];
-            document.getElementById("target-text").innerText = "ابْحَثْ عَنْ حَرْفِ: " + targetLetter.char;
-            speak("أَيْنَ حَرْفُ " + targetLetter.char + "؟");
+        // 2. بناء شبكة الكلمات
+        const wordsGrid = document.getElementById('words-grid');
+        wordsData.forEach(item => {
+            let card = document.createElement('div');
+            card.className = 'word-card';
+            card.onclick = () => checkWord(item.t);
+            card.innerHTML = `<span class="word-icon">${item.i}</span><p class="word-text">${item.t}</p>`;
+            wordsGrid.appendChild(card);
+        });
+
+        // 3. بناء شبكة المدود
+        const maddGrid = document.getElementById('madd-grid');
+        maddData.forEach(item => {
+            let row = document.createElement('div');
+            row.className = 'madd-row';
+            row.innerHTML = `
+                <div class="sound-box" onclick="playCustomOrTTS('short', '${item.short}')">
+                    <span>صوت قصير</span>
+                    <strong>${item.short.split(' ')[0]}</strong>
+                </div>
+                <div style="font-size:22px; color:#ff9800;">⟵</div>
+                <div class="sound-box" onclick="playCustomOrTTS('long', '${item.long}')">
+                    <span>صوت طويل (مد)</span>
+                    <strong>${item.long.split(' ')[0]}</strong>
+                </div>
+            `;
+            maddGrid.appendChild(row);
+        });
+
+        /* ================= ألعاب وتحديات ================= */
+        let targetLetter = null, letterScore = 0;
+        function askLetterQuestion() {
+            targetLetter = lettersData[Math.floor(Math.random() * lettersData.length)];
+            document.getElementById("target-letter-text").innerText = "ابْحَثْ عَنْ حَرْفِ: " + targetLetter.char;
+            speakFallback("أَيْنَ حَرْفُ " + targetLetter.char + "؟");
         }
 
         function checkLetter(item) {
             if (!targetLetter) {
-                speak(item.char + " .. " + item.word);
+                playCustomOrTTS(item.id, item.char + " .. " + item.word);
                 return;
             }
-
             if (item.char === targetLetter.char) {
-                score++;
-                document.getElementById("score-counter").innerText = score;
-                playSuccessSound(); // نغمة الفوز
-                speak("أَحْسَنْتَ!");
-                document.getElementById("target-text").innerText = "🎉 مُمْتَاز!";
-                
-                // الانتقال التلقائي بعد ثانية ونصف
-                setTimeout(askQuestion, 1500);
+                letterScore++;
+                document.getElementById("score-letters").innerText = letterScore;
+                playSuccessSound();
+                speakFallback("أَحْسَنْتَ!");
+                document.getElementById("target-letter-text").innerText = "🎉 مُمْتَاز!";
+                setTimeout(askLetterQuestion, 1500);
             } else {
-                speak("حَاوِلْ مَرَّةً أُخْرَى");
+                speakFallback("حَاوِلْ مَرَّةً أُخْرَى");
             }
         }
-    </script>
-    <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('Service Worker Registered'))
-        .catch((err) => console.log('Service Worker Failed', err));
-    });
-  }
-</script>
 
+        let targetWord = null, wordScore = 0;
+        function askWordQuestion() {
+            targetWord = wordsData[Math.floor(Math.random() * wordsData.length)].t;
+            document.getElementById("target-word-text").innerText = "ابْحَثْ عَنْ كَلِمَةِ: " + targetWord;
+            speakFallback("أَيْنَ كَلِمَةُ " + targetWord + "؟");
+        }
+
+        function checkWord(selectedWord) {
+            if (!targetWord) {
+                playCustomOrTTS(selectedWord, selectedWord);
+                return;
+            }
+            if (selectedWord === targetWord) {
+                wordScore++;
+                document.getElementById("score-words").innerText = wordScore;
+                playSuccessSound();
+                speakFallback("أَحْسَنْتَ! إِجَابَةٌ صَحِيحَةٌ");
+                document.getElementById("target-word-text").innerText = "🎉 مُمْتَاز!";
+                setTimeout(askWordQuestion, 1500);
+            } else {
+                speakFallback("حَاوِلْ مَرَّةً أُخْرَى");
+            }
+        }
+
+        /* ================= التبديل بين الأقسام ================= */
+        function switchSection(sectionName, btn) {
+            document.querySelectorAll('.screen-section').forEach(sec => sec.classList.remove('active-section'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+            
+            document.getElementById('section-' + sectionName).classList.add('active-section');
+            btn.classList.add('active-tab');
+        }
+    </script>
+
+    <!-- تسجيل Service Worker للعمل أوفلاين -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(() => console.log('Offline Ready'))
+            .catch(err => console.log('SW error', err));
+        });
+      }
+    </script>
 </body>
 </html>
